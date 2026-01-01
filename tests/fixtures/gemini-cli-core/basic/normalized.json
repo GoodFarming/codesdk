@@ -1,0 +1,102 @@
+[
+  {
+    "schema_version": 1,
+    "type": "model.input",
+    "trace": {
+      "session_id": "fixture-gemini-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "gemini-cli-core",
+      "model": "gemini-2.5-pro"
+    },
+    "payload": {
+      "input_ref": {
+        "artifact_id": "artifact-1",
+        "content_type": "application/json",
+        "content_hash": "sha256:a29e77afb4fe06ec765893b6d478467c37240d98eb45819012c533956e8cdcc0",
+        "size_bytes": 243,
+        "name": "model_input.json"
+      },
+      "input_hash": "sha256:9ab769e25997c0491c5e8ac9637c5bc8fd96ac2981b6cc07503f77511c6437d6",
+      "context_window": {
+        "strategy": "none"
+      },
+      "implicit_sources_ref": {
+        "artifact_id": "artifact-2",
+        "content_type": "application/json",
+        "content_hash": "sha256:6e7fbec28f82377827d73be7ba6b5dca66ed22dd5dad6c4466e3c88b7ab370fe",
+        "size_bytes": 63,
+        "name": "implicit_sources.json"
+      }
+    }
+  },
+  {
+    "schema_version": 1,
+    "type": "model.output.delta",
+    "trace": {
+      "session_id": "fixture-gemini-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "gemini-cli-core",
+      "model": "gemini-2.5-pro"
+    },
+    "payload": {
+      "kind": "text_delta",
+      "block_id": "block-t1-0",
+      "delta": "FIXTURE OK."
+    }
+  },
+  {
+    "schema_version": 1,
+    "type": "model.output.completed",
+    "trace": {
+      "session_id": "fixture-gemini-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "gemini-cli-core",
+      "model": "gemini-2.5-pro"
+    },
+    "payload": {
+      "content": [
+        {
+          "type": "text",
+          "text": "FIXTURE OK."
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": 1,
+    "type": "usage.reported",
+    "trace": {
+      "session_id": "fixture-gemini-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "gemini-cli-core",
+      "model": "gemini-2.5-pro"
+    },
+    "payload": {
+      "input_tokens": 3076,
+      "cached_input_tokens": 1882,
+      "output_tokens": 5
+    }
+  },
+  {
+    "schema_version": 1,
+    "type": "task.completed",
+    "trace": {
+      "session_id": "fixture-gemini-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "gemini-cli-core"
+    },
+    "payload": {
+      "reason": "stream ended"
+    }
+  }
+]

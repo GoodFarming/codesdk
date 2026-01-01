@@ -1,0 +1,53 @@
+[
+  [
+    {
+      "type": "model_info",
+      "value": "gemini-2.5-pro"
+    },
+    {
+      "type": "thought",
+      "value": {
+        "subject": "Responding Intention Underway",
+        "description": "FIXTURE OK."
+      },
+      "traceId": "17144123825c6bc2"
+    },
+    {
+      "type": "content",
+      "value": "FIXTURE OK.",
+      "traceId": "17144123825c6bc2"
+    },
+    {
+      "type": "finished",
+      "value": {
+        "reason": "STOP",
+        "usageMetadata": {
+          "promptTokenCount": 3076,
+          "candidatesTokenCount": 5,
+          "totalTokenCount": 3099,
+          "cachedContentTokenCount": 1882,
+          "trafficType": "PROVISIONED_THROUGHPUT",
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 3076
+            }
+          ],
+          "cacheTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 1882
+            }
+          ],
+          "candidatesTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 5
+            }
+          ],
+          "thoughtsTokenCount": 18
+        }
+      }
+    }
+  ]
+]

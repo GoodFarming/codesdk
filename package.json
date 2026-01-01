@@ -1,0 +1,57 @@
+{
+  "name": "@goodfarming/codesdk",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "bin": {
+    "codesdkd": "./bin/codesdkd.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "prepare": "npm run build",
+    "prepack": "npm run build",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "pretest": "npm run build",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:contract": "vitest run -t contract",
+    "test:live": "RUN_LIVE_TESTS=1 vitest run",
+    "fixtures:record": "RECORD_FIXTURES=1 vitest run tests/fixtures/record-fixtures.test.ts",
+    "lint": "echo \"lint not configured\" && exit 0",
+    "format": "echo \"format not configured\" && exit 0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22.12.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.6.3",
+    "vitest": "^1.6.0"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.1.76",
+    "@anthropic-ai/sdk": "^0.71.2",
+    "@google/gemini-cli-core": "^0.22.5",
+    "@modelcontextprotocol/sdk": "^1.25.1",
+    "@openai/codex-sdk": "^0.77.0",
+    "@opencode-ai/sdk": "^1.0.222",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "better-sqlite3": "^12.5.0",
+    "prom-client": "^15.1.3",
+    "tar": "^7.5.2",
+    "zod": "^4.3.4"
+  }
+}

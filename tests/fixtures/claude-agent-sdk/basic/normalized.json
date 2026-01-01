@@ -1,0 +1,122 @@
+[
+  {
+    "schema_version": 1,
+    "type": "model.input",
+    "trace": {
+      "session_id": "fixture-claude-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "claude-agent-sdk"
+    },
+    "payload": {
+      "input_ref": {
+        "artifact_id": "artifact-1",
+        "content_type": "application/json",
+        "content_hash": "sha256:8ef6df505b59fe95707bad5d32f1358e57d8627b58351cfb98d946c1b9e5bc92",
+        "size_bytes": 345,
+        "name": "model_input.json"
+      },
+      "input_hash": "sha256:d220055e8b6983e26d9cae9274e0a859b82be4c482806cc28ddb38da7b4070af",
+      "context_window": {
+        "strategy": "none"
+      },
+      "implicit_sources_ref": {
+        "artifact_id": "artifact-2",
+        "content_type": "application/json",
+        "content_hash": "sha256:40f05741e9b90e843184a9a6b029462845af58c3dcbf6d7b7d8827cee6e22dbd",
+        "size_bytes": 95,
+        "name": "implicit_sources.json"
+      }
+    }
+  },
+  {
+    "schema_version": 1,
+    "type": "model.output.delta",
+    "trace": {
+      "session_id": "fixture-claude-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "claude-agent-sdk"
+    },
+    "payload": {
+      "kind": "text_delta",
+      "block_id": "block-e1393184-211e-4153-a57a-1d8f5f90688f-0",
+      "delta": "FIXTURE OK."
+    }
+  },
+  {
+    "schema_version": 1,
+    "type": "model.output.completed",
+    "trace": {
+      "session_id": "fixture-claude-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "claude-agent-sdk"
+    },
+    "payload": {
+      "content": [
+        {
+          "type": "text",
+          "text": "FIXTURE OK."
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": 1,
+    "type": "usage.reported",
+    "trace": {
+      "session_id": "fixture-claude-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "claude-agent-sdk"
+    },
+    "payload": {
+      "usage": {
+        "input_tokens": 36,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 7,
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        }
+      },
+      "model_usage": {
+        "claude-opus-4-5-20251101": {
+          "inputTokens": 36,
+          "outputTokens": 7,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.000355,
+          "contextWindow": 200000
+        }
+      },
+      "total_cost_usd": 0.000355
+    }
+  },
+  {
+    "schema_version": 1,
+    "type": "task.completed",
+    "trace": {
+      "session_id": "fixture-claude-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "claude-agent-sdk"
+    },
+    "payload": {
+      "reason": "stream ended"
+    }
+  }
+]

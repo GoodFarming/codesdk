@@ -1,0 +1,21 @@
+{
+  "runtime": "claude-agent-sdk",
+  "scenario": "basic",
+  "captured_at": "2026-01-01T05:59:42.915Z",
+  "cwd": "<CWD>",
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Respond with the exact phrase: FIXTURE OK."
+        }
+      ]
+    }
+  ],
+  "adapter_options": {
+    "includePartialMessages": true,
+    "settingSources": []
+  }
+}

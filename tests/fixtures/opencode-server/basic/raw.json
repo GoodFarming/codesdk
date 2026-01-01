@@ -1,0 +1,281 @@
+[
+  {
+    "type": "server.connected",
+    "properties": {}
+  },
+  {
+    "type": "message.updated",
+    "properties": {
+      "info": {
+        "id": "msg_b78241a380015hGlbdLK5d0hs7",
+        "sessionID": "ses_487dbe68effeB67IBqOy9oWaIH",
+        "role": "user",
+        "time": {
+          "created": 1767247190584
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "cerebras",
+          "modelID": "zai-glm-4.6"
+        }
+      }
+    }
+  },
+  {
+    "type": "message.part.updated",
+    "properties": {
+      "part": {
+        "id": "prt_b78241a42001JkcXNxt54MXEkU",
+        "sessionID": "ses_487dbe68effeB67IBqOy9oWaIH",
+        "messageID": "msg_b78241a380015hGlbdLK5d0hs7",
+        "type": "text",
+        "text": "USER: Respond with the exact phrase: FIXTURE OK."
+      }
+    }
+  },
+  {
+    "type": "session.updated",
+    "properties": {
+      "info": {
+        "id": "ses_487dbe68effeB67IBqOy9oWaIH",
+        "version": "1.0.174",
+        "projectID": "global",
+        "directory": "<CWD>",
+        "title": "New session - 2026-01-01T05:59:50.388Z",
+        "time": {
+          "created": 1767247190389,
+          "updated": 1767247190611
+        }
+      }
+    }
+  },
+  {
+    "type": "session.status",
+    "properties": {
+      "sessionID": "ses_487dbe68effeB67IBqOy9oWaIH",
+      "status": {
+        "type": "busy"
+      }
+    }
+  },
+  {
+    "type": "message.updated",
+    "properties": {
+      "info": {
+        "id": "msg_b78241a75001Ola9iDoaaV20M6",
+        "sessionID": "ses_487dbe68effeB67IBqOy9oWaIH",
+        "role": "assistant",
+        "time": {
+          "created": 1767247190645
+        },
+        "parentID": "msg_b78241a380015hGlbdLK5d0hs7",
+        "modelID": "zai-glm-4.6",
+        "providerID": "cerebras",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "<CWD>",
+          "root": "/"
+        },
+        "cost": 0,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "reasoning": 0,
+          "cache": {
+            "read": 0,
+            "write": 0
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "message.updated",
+    "properties": {
+      "info": {
+        "id": "msg_b78241a380015hGlbdLK5d0hs7",
+        "sessionID": "ses_487dbe68effeB67IBqOy9oWaIH",
+        "role": "user",
+        "time": {
+          "created": 1767247190584
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "cerebras",
+          "modelID": "zai-glm-4.6"
+        }
+      }
+    }
+  },
+  {
+    "type": "session.updated",
+    "properties": {
+      "info": {
+        "id": "ses_487dbe68effeB67IBqOy9oWaIH",
+        "version": "1.0.174",
+        "projectID": "global",
+        "directory": "<CWD>",
+        "title": "New session - 2026-01-01T05:59:50.388Z",
+        "time": {
+          "created": 1767247190389,
+          "updated": 1767247190724
+        },
+        "summary": {
+          "additions": 0,
+          "deletions": 0,
+          "files": 0
+        }
+      }
+    }
+  },
+  {
+    "type": "session.diff",
+    "properties": {
+      "sessionID": "ses_487dbe68effeB67IBqOy9oWaIH",
+      "diff": []
+    }
+  },
+  {
+    "type": "message.updated",
+    "properties": {
+      "info": {
+        "id": "msg_b78241a380015hGlbdLK5d0hs7",
+        "sessionID": "ses_487dbe68effeB67IBqOy9oWaIH",
+        "role": "user",
+        "time": {
+          "created": 1767247190584
+        },
+        "summary": {
+          "title": "Forcing FIXTURE OK. phrase response",
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "cerebras",
+          "modelID": "zai-glm-4.6"
+        }
+      }
+    }
+  },
+  {
+    "type": "session.updated",
+    "properties": {
+      "info": {
+        "id": "ses_487dbe68effeB67IBqOy9oWaIH",
+        "version": "1.0.174",
+        "projectID": "global",
+        "directory": "<CWD>",
+        "title": "Responding FIXTURE OK phrase",
+        "time": {
+          "created": 1767247190389,
+          "updated": 1767247193022
+        },
+        "summary": {
+          "additions": 0,
+          "deletions": 0,
+          "files": 0
+        }
+      }
+    }
+  },
+  {
+    "type": "session.status",
+    "properties": {
+      "sessionID": "ses_487dbe68effeB67IBqOy9oWaIH",
+      "status": {
+        "type": "busy"
+      }
+    }
+  },
+  {
+    "type": "message.part.updated",
+    "properties": {
+      "part": {
+        "id": "prt_b782428b1001BTGJyqpl2w9Kxx",
+        "sessionID": "ses_487dbe68effeB67IBqOy9oWaIH",
+        "messageID": "msg_b78241a75001Ola9iDoaaV20M6",
+        "type": "step-start"
+      }
+    }
+  },
+  {
+    "type": "message.part.updated",
+    "properties": {
+      "part": {
+        "id": "prt_b78242937001coYa3ali7B7Gcf",
+        "sessionID": "ses_487dbe68effeB67IBqOy9oWaIH",
+        "messageID": "msg_b78241a75001Ola9iDoaaV20M6",
+        "type": "text",
+        "text": "\n",
+        "time": {
+          "start": 1767247194423
+        }
+      },
+      "delta": "\n"
+    }
+  },
+  {
+    "type": "message.part.updated",
+    "properties": {
+      "part": {
+        "id": "prt_b78242937001coYa3ali7B7Gcf",
+        "sessionID": "ses_487dbe68effeB67IBqOy9oWaIH",
+        "messageID": "msg_b78241a75001Ola9iDoaaV20M6",
+        "type": "text",
+        "text": "\nFIXTURE",
+        "time": {
+          "start": 1767247194423
+        }
+      },
+      "delta": "FIXTURE"
+    }
+  },
+  {
+    "type": "message.part.updated",
+    "properties": {
+      "part": {
+        "id": "prt_b78242937001coYa3ali7B7Gcf",
+        "sessionID": "ses_487dbe68effeB67IBqOy9oWaIH",
+        "messageID": "msg_b78241a75001Ola9iDoaaV20M6",
+        "type": "text",
+        "text": "\nFIXTURE OK.",
+        "time": {
+          "start": 1767247194423
+        }
+      },
+      "delta": " OK."
+    }
+  },
+  {
+    "type": "message.part.updated",
+    "properties": {
+      "part": {
+        "id": "prt_b78242937001coYa3ali7B7Gcf",
+        "sessionID": "ses_487dbe68effeB67IBqOy9oWaIH",
+        "messageID": "msg_b78241a75001Ola9iDoaaV20M6",
+        "type": "text",
+        "text": "\nFIXTURE OK.",
+        "time": {
+          "start": 1767247194437,
+          "end": 1767247194437
+        }
+      }
+    }
+  },
+  {
+    "type": "session.error",
+    "properties": {
+      "sessionID": "ses_487dbe68effeB67IBqOy9oWaIH",
+      "error": {
+        "name": "UnknownError",
+        "data": {
+          "message": "[\n  {\n    \"code\": \"invalid_union\",\n    \"errors\": [\n      [\n        {\n          \"expected\": \"string\",\n          \"code\": \"invalid_type\",\n          \"path\": [\n            \"reason\"\n          ],\n          \"message\": \"Invalid input: expected string, received object\"\n        }\n      ],\n      [\n        {\n          \"expected\": \"object\",\n          \"code\": \"invalid_type\",\n          \"path\": [\n            \"part\"\n          ],\n          \"message\": \"Invalid input: expected object, received undefined\"\n        },\n        {\n          \"expected\": \"string\",\n          \"code\": \"invalid_type\",\n          \"path\": [\n            \"delta\"\n          ],\n          \"message\": \"Invalid input: expected string, received undefined\"\n        }\n      ],\n      [\n        {\n          \"expected\": \"object\",\n          \"code\": \"invalid_type\",\n          \"path\": [\n            \"part\"\n          ],\n          \"message\": \"Invalid input: expected object, received undefined\"\n        },\n        {\n          \"expected\": \"string\",\n          \"code\": \"invalid_type\",\n          \"path\": [\n            \"delta\"\n          ],\n          \"message\": \"Invalid input: expected string, received undefined\"\n        }\n      ]\n    ],\n    \"path\": [],\n    \"message\": \"Invalid input\"\n  }\n]"
+        }
+      }
+    }
+  }
+]

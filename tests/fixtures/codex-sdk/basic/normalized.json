@@ -1,0 +1,84 @@
+[
+  {
+    "schema_version": 1,
+    "type": "model.input",
+    "trace": {
+      "session_id": "fixture-codex-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "codex-sdk"
+    },
+    "payload": {
+      "input_ref": {
+        "artifact_id": "artifact-1",
+        "content_type": "application/json",
+        "content_hash": "sha256:1019cd3d0f0879d60d8e7ad3fff014a3fa9a7cd59bdc02f0446527897157aa67",
+        "size_bytes": 474,
+        "name": "model_input.json"
+      },
+      "input_hash": "sha256:cabae49fe3e82a395e0be621d132c7a393cd4c933e4d3a2adf59ee1528133478",
+      "context_window": {
+        "strategy": "none"
+      },
+      "implicit_sources_ref": {
+        "artifact_id": "artifact-2",
+        "content_type": "application/json",
+        "content_hash": "sha256:f2e7f3c3b2fd6429772c7742f22fb605b539c747010921a789f3102cdde8fd28",
+        "size_bytes": 71,
+        "name": "implicit_sources.json"
+      }
+    }
+  },
+  {
+    "schema_version": 1,
+    "type": "model.output.completed",
+    "trace": {
+      "session_id": "fixture-codex-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "codex-sdk"
+    },
+    "payload": {
+      "content": [
+        {
+          "type": "text",
+          "text": "FIXTURE OK."
+        }
+      ]
+    }
+  },
+  {
+    "schema_version": 1,
+    "type": "usage.reported",
+    "trace": {
+      "session_id": "fixture-codex-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "codex-sdk"
+    },
+    "payload": {
+      "usage": {
+        "input_tokens": 7517,
+        "cached_input_tokens": 0,
+        "output_tokens": 41
+      }
+    }
+  },
+  {
+    "schema_version": 1,
+    "type": "task.completed",
+    "trace": {
+      "session_id": "fixture-codex-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "codex-sdk"
+    },
+    "payload": {
+      "reason": "stream ended"
+    }
+  }
+]

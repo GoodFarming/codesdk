@@ -1,0 +1,118 @@
+[
+  {
+    "schema_version": 1,
+    "type": "model.input",
+    "trace": {
+      "session_id": "fixture-opencode-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "opencode-server"
+    },
+    "payload": {
+      "input_ref": {
+        "artifact_id": "artifact-1",
+        "content_type": "application/json",
+        "content_hash": "sha256:a29e77afb4fe06ec765893b6d478467c37240d98eb45819012c533956e8cdcc0",
+        "size_bytes": 243,
+        "name": "model_input.json"
+      },
+      "input_hash": "sha256:9ab769e25997c0491c5e8ac9637c5bc8fd96ac2981b6cc07503f77511c6437d6",
+      "context_window": {
+        "strategy": "none"
+      },
+      "implicit_sources_ref": {
+        "artifact_id": "artifact-2",
+        "content_type": "application/json",
+        "content_hash": "sha256:6e7fbec28f82377827d73be7ba6b5dca66ed22dd5dad6c4466e3c88b7ab370fe",
+        "size_bytes": 63,
+        "name": "implicit_sources.json"
+      }
+    }
+  },
+  {
+    "schema_version": 1,
+    "type": "model.output.delta",
+    "trace": {
+      "session_id": "fixture-opencode-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "opencode-server"
+    },
+    "payload": {
+      "kind": "text_delta",
+      "block_id": "prt_b78241a42001JkcXNxt54MXEkU",
+      "delta": "USER: Respond with the exact phrase: FIXTURE OK."
+    }
+  },
+  {
+    "schema_version": 1,
+    "type": "model.output.delta",
+    "trace": {
+      "session_id": "fixture-opencode-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "opencode-server"
+    },
+    "payload": {
+      "kind": "text_delta",
+      "block_id": "prt_b78242937001coYa3ali7B7Gcf",
+      "delta": "\n"
+    }
+  },
+  {
+    "schema_version": 1,
+    "type": "model.output.delta",
+    "trace": {
+      "session_id": "fixture-opencode-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "opencode-server"
+    },
+    "payload": {
+      "kind": "text_delta",
+      "block_id": "prt_b78242937001coYa3ali7B7Gcf",
+      "delta": "FIXTURE"
+    }
+  },
+  {
+    "schema_version": 1,
+    "type": "model.output.delta",
+    "trace": {
+      "session_id": "fixture-opencode-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "opencode-server"
+    },
+    "payload": {
+      "kind": "text_delta",
+      "block_id": "prt_b78242937001coYa3ali7B7Gcf",
+      "delta": " OK."
+    }
+  },
+  {
+    "schema_version": 1,
+    "type": "task.failed",
+    "trace": {
+      "session_id": "fixture-opencode-basic",
+      "task_id": "t1"
+    },
+    "runtime": {
+      "name": "opencode-server"
+    },
+    "payload": {
+      "error": "UnknownError",
+      "retryable": false,
+      "raw": {
+        "name": "UnknownError",
+        "data": {
+          "message": "[\n  {\n    \"code\": \"invalid_union\",\n    \"errors\": [\n      [\n        {\n          \"expected\": \"string\",\n          \"code\": \"invalid_type\",\n          \"path\": [\n            \"reason\"\n          ],\n          \"message\": \"Invalid input: expected string, received object\"\n        }\n      ],\n      [\n        {\n          \"expected\": \"object\",\n          \"code\": \"invalid_type\",\n          \"path\": [\n            \"part\"\n          ],\n          \"message\": \"Invalid input: expected object, received undefined\"\n        },\n        {\n          \"expected\": \"string\",\n          \"code\": \"invalid_type\",\n          \"path\": [\n            \"delta\"\n          ],\n          \"message\": \"Invalid input: expected string, received undefined\"\n        }\n      ],\n      [\n        {\n          \"expected\": \"object\",\n          \"code\": \"invalid_type\",\n          \"path\": [\n            \"part\"\n          ],\n          \"message\": \"Invalid input: expected object, received undefined\"\n        },\n        {\n          \"expected\": \"string\",\n          \"code\": \"invalid_type\",\n          \"path\": [\n            \"delta\"\n          ],\n          \"message\": \"Invalid input: expected string, received undefined\"\n        }\n      ]\n    ],\n    \"path\": [],\n    \"message\": \"Invalid input\"\n  }\n]"
+        }
+      }
+    }
+  }
+]
