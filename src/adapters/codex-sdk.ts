@@ -210,9 +210,10 @@ export class CodexSdkAdapter implements RuntimeAdapter {
     };
 
     const effectiveRuntimeConfig = this.buildRuntimeConfig(env, input.runtimeConfig);
+    const compiledRuntimeConfig = canonicalizeRuntimeConfigForModelInput(effectiveRuntimeConfig, env);
     const compiled = compileRuntimeInput(input.messages as any, {
       toolManifest: input.toolManifest,
-      runtimeConfig: effectiveRuntimeConfig,
+      runtimeConfig: compiledRuntimeConfig,
       maxChars: this.options.maxChars
     });
 
@@ -466,6 +467,26 @@ function resolveCodexEnv(env: RuntimeEnv): Record<string, string> {
   if (!next.CODEX_HOME) {
     next.CODEX_HOME = path.join(home, '.codex');
   }
+  return next;
+}
+
+function canonicalizeRuntimeConfigForModelInput(
+  runtimeConfig: Record<string, unknown>,
+  env: RuntimeEnv
+): Record<string, unknown> {
+  const next = { ...runtimeConfig };
+
+  if (typeof next.workingDirectory === 'string' && next.workingDirectory === env.cwd) {
+    next.workingDirectory = '<CWD>';
+  }
+
+  if (Array.isArray(next.additionalDirectories)) {
+    next.additionalDirectories = next.additionalDirectories.map((entry) => {
+      if (typeof entry === 'string' && entry === env.cwd) return '<CWD>';
+      return entry;
+    });
+  }
+
   return next;
 }
 

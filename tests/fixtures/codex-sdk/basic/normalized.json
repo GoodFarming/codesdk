@@ -13,11 +13,11 @@
       "input_ref": {
         "artifact_id": "artifact-1",
         "content_type": "application/json",
-        "content_hash": "sha256:1019cd3d0f0879d60d8e7ad3fff014a3fa9a7cd59bdc02f0446527897157aa67",
-        "size_bytes": 474,
+        "content_hash": "sha256:117015795d43ee0c1ea8dc17664e6ac6c9fc95ebe5a7aded9759e8cac61ca803",
+        "size_bytes": 461,
         "name": "model_input.json"
       },
-      "input_hash": "sha256:cabae49fe3e82a395e0be621d132c7a393cd4c933e4d3a2adf59ee1528133478",
+      "input_hash": "sha256:e047dd6af10433edb437e2321062727b074ebb70370327fbab3e5191274282a9",
       "context_window": {
         "strategy": "none"
       },
