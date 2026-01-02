@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 - Fix Codex fixture determinism across different `cwd` paths by canonicalizing runtime config paths in `model.input` artifacts.
 
+## 0.1.3
+
+- Fix npm bin path normalization to keep CLI binaries on publish.
+
 ## 0.1.2
 
 - Improve MCP tool registry for OpenCode and add MCP CLI support for tests.
