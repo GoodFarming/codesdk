@@ -17,7 +17,8 @@
     "bin"
   ],
   "bin": {
-    "codesdkd": "./bin/codesdkd.js"
+    "codesdkd": "./bin/codesdkd.js",
+    "codesdk-mcp": "./bin/codesdk-mcp.js"
   },
   "scripts": {
     "build": "tsup",

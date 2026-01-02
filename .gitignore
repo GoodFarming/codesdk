@@ -3,3 +3,9 @@ dist/
 coverage/
 *.log
 .env
+.env.*
+.DS_Store
+.tmp/
+npm-debug.log*
+pnpm-debug.log*
+yarn-error.log*

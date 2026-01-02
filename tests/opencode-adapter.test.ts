@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { Event } from '@opencode-ai/sdk';
 import { OpencodeServerAdapter } from '../src/adapters/opencode-server.js';
 import type { RuntimeEnv, RuntimeSessionHandle } from '../src/core/types.js';
@@ -128,5 +128,85 @@ describe('OpencodeServerAdapter (mock)', () => {
     expect(seen).toContain('tool.call.requested');
     expect(seen).toContain('tool.call.completed');
     expect(seen).toContain('usage.reported');
+  });
+
+  it('registers CodeSDK MCP server when toolManifest is provided', async () => {
+    const events: Event[] = [
+      {
+        type: 'message.updated',
+        properties: {
+          info: {
+            id: 'msg-1',
+            sessionID: 'session-1',
+            role: 'assistant',
+            time: { created: 1, completed: 2 },
+            parentID: 'msg-0',
+            modelID: 'model',
+            providerID: 'provider',
+            mode: 'default',
+            path: { cwd: '/tmp', root: '/tmp' },
+            summary: false,
+            cost: 0,
+            tokens: { input: 1, output: 2, reasoning: 0, cache: { read: 0, write: 0 } },
+            finish: 'stop'
+          }
+        }
+      }
+    ];
+
+    const statusMock = vi
+      .fn()
+      .mockResolvedValueOnce({})
+      .mockResolvedValueOnce({ codesdk: { status: 'disabled' } });
+    const addMock = vi.fn().mockResolvedValue({});
+    const connectMock = vi.fn().mockResolvedValue(true);
+
+    const fakeClient = {
+      event: {
+        subscribe: async () => ({ stream: makeStream(events) })
+      },
+      session: {
+        promptAsync: async () => undefined,
+        abort: async () => undefined
+      },
+      config: {
+        get: async () => ({})
+      },
+      mcp: {
+        status: statusMock,
+        add: addMock,
+        connect: connectMock
+      }
+    } as any;
+
+    const adapter = new OpencodeServerAdapter({
+      client: fakeClient,
+      captureImplicitSources: false
+    });
+
+    const handle = await adapter.startTask(env, runtimeSession, {
+      taskId: 't1',
+      messages: [{ role: 'user', content: [{ type: 'text', text: 'hello' }] }],
+      permissionMode: 'auto',
+      toolManifest: { tools: [{ name: 'workspace.read' }] }
+    });
+
+    for await (const _event of handle.events()) {
+      // drain
+    }
+
+    expect(addMock).toHaveBeenCalledTimes(1);
+    const addCall = addMock.mock.calls[0]?.[0];
+    expect(addCall?.body?.name).toBe('codesdk');
+    expect(addCall?.body?.config?.type).toBe('local');
+    expect(addCall?.body?.config?.command).toContain('--workspace-root');
+    expect(addCall?.body?.config?.command).toContain('/tmp');
+    expect(addCall?.body?.config?.command).toContain('--tools');
+    expect(addCall?.body?.config?.command).toContain('workspace.read');
+
+    expect(connectMock).toHaveBeenCalledTimes(1);
+    const connectCall = connectMock.mock.calls[0]?.[0];
+    expect(connectCall?.path?.name).toBe('codesdk');
+    expect(connectCall?.query?.directory).toBe('/tmp');
   });
 });

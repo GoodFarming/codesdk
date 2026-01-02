@@ -22,6 +22,18 @@ Adapter responsibilities:
 - Ensure `RuntimeEnv` is explicit about HOME/XDG so effective config sources are deterministic.
 - Include a config/policy snapshot in `model.input.implicit_sources_ref` (paths + hashes; no secrets).
 
+## MCP (owned tools) integration
+
+Observed:
+
+- Codex supports MCP servers as a client via `CODEX_HOME/config.toml`.
+- Tool invocations appear in the event stream as `mcp_tool_call` thread items.
+
+Adapter responsibilities:
+
+- When CodeSDK wants Codex to use CodeSDK-owned tools, the adapter must ensure a `codesdk` MCP server is configured (ideally via a namespaced `CODEX_HOME` so we never mutate developer config).
+  - Current approach: write/append a `CODEX_HOME/config.toml` entry for `[mcp_servers.codesdk]` that launches `codesdk-mcp` over stdio.
+
 ## Implicit prompt/context sources (“hidden input”)
 
 Observed:
@@ -46,8 +58,7 @@ Contract tests:
 Default posture (current adapter):
 
 - Runtime-internal tools are treated as runtime-owned (`toolExecutionModel: runtime_internal`).
-- Codex supports MCP as a client, but CodeSDK does not manage MCP server registration yet; tool manifests provided to the adapter are ignored for now.
-  - Closing this gap requires managing MCP via Codex’s config/CLI surface under a namespaced `CODEX_HOME` (don’t mutate the user’s real config).
+- Codex supports MCP as a client, and CodeSDK injects a `codesdk` MCP server when a `toolManifest` is provided (via a namespaced `CODEX_HOME/config.toml` entry that launches `codesdk-mcp` over stdio).
 
 Restriction strategy:
 

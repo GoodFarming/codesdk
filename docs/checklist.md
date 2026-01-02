@@ -237,55 +237,57 @@ This phase closes the remaining parity gaps so all runtimes can:
 
 ### P6.A — External MCP tool host (`codesdk-mcp`)
 
-- [ ] Implement a standalone MCP server binary `codesdk-mcp` for CodeSDK-owned tools.
-  - [ ] Support `stdio` transport (required for Codex + OpenCode local MCP registration).
+- [x] Implement a standalone MCP server binary `codesdk-mcp` for CodeSDK-owned tools.
+  - [x] Support `stdio` transport (required for Codex + OpenCode local MCP registration).
   - [ ] Optional: support HTTP/SSE (useful for remote server-side registration / proxies).
-- [ ] Add CLI/env configuration for:
-  - [ ] `workspaceRoot`
-  - [ ] permission mode (`ask|auto|yolo`) + overrides
-  - [ ] sandbox runner selection (host vs Docker) + network/timeout defaults
-- [ ] Add a smoke test that spawns `codesdk-mcp` and exercises `tools/list` + `tools/call`.
+- [x] Add CLI/env configuration for:
+  - [x] `workspaceRoot`
+  - [x] permission mode (`ask|auto|yolo`) + overrides
+  - [x] sandbox runner selection (host vs Docker) + network/timeout defaults
+- [x] Add a smoke test that spawns `codesdk-mcp` and exercises `tools/list` + `tools/call`.
 
 ### P6.B — Codex: MCP injection + tool-path live test
 
-- [ ] Clarify scope: Codex CLI/IDE support MCP as a **client**; CodeSDK’s gap is MCP *registration management* for the Codex adapter.
-- [ ] Decide the injection mechanism (prefer CLI-managed config over TOML parsing):
-  - [ ] Use `CODEX_HOME=<temp>` + `codex mcp add ...` (preferred: idempotent, avoids brittle TOML writes).
-  - [ ] Fallback: write a minimal `CODEX_HOME/config.toml` with `[mcp_servers.<id>]` (only if CLI path is unavailable).
+- [x] Clarify scope: Codex CLI/IDE support MCP as a **client**; CodeSDK’s gap is MCP *registration management* for the Codex adapter.
+- [x] Decide the injection mechanism (avoid CLI dependency; use `CODEX_HOME` + minimal TOML writes):
+  - [x] Write/append a minimal `CODEX_HOME/config.toml` with `[mcp_servers.<id>]` for stdio `codesdk-mcp`.
+  - [ ] Optional: use `CODEX_HOME=<temp>` + `codex mcp add ...` (idempotent, but requires the CLI binary in PATH).
   - [ ] Optional: use `codex -c key=value ...` overrides for one-off tests (only if workable for nested MCP config).
-- [ ] Implement Codex adapter MCP “injection”:
-  - [ ] If `toolManifest` is provided, ensure a `codesdk` MCP server is available to Codex (prefer stdio `codesdk-mcp`).
-  - [ ] Prefer namespaced `CODEX_HOME` so adapter tests don’t mutate the user’s real Codex config.
-  - [ ] Record the effective MCP config snapshot (paths + safe hashes; no secrets) in `model.input.implicit_sources_ref`.
-- [ ] Add mocked tests asserting:
-  - [ ] A configured MCP server produces `mcp_tool_call` items and CodeSDK maps them to `tool.call.*`.
-  - [ ] Tool naming is stable and matches what the model sees (server + tool).
-- [ ] Add gated live test: `codex-sdk tool path` (CodeSDK tool executed via MCP; stream completes).
-- [ ] Update `docs/runtimes/codex-sdk.md` with concrete findings (config locations, tool naming, and how CodeSDK injects MCP).
+- [x] Implement Codex adapter MCP “injection”:
+  - [x] If `toolManifest` is provided, ensure a `codesdk` MCP server is available to Codex (prefer stdio `codesdk-mcp`).
+  - [x] Prefer namespaced `CODEX_HOME` so adapter tests don’t mutate the user’s real Codex config.
+  - [x] Record the effective MCP config snapshot (paths + safe hashes; no secrets) in `model.input.implicit_sources_ref`.
+- [x] Add mocked tests asserting:
+  - [x] A configured MCP server produces `mcp_tool_call` items and CodeSDK maps them to `tool.call.*`.
+  - [x] Tool naming is stable and matches what the model sees (server + tool).
+- [x] Add gated live test: `codex-sdk tool path` (CodeSDK tool executed via MCP; stream completes).
+- [x] Update `docs/runtimes/codex-sdk.md` with concrete findings (config locations, tool naming, and how CodeSDK injects MCP).
 
 ### P6.C — OpenCode: MCP registration + tool-path live test
 
-- [ ] Add an OpenCode server harness for tests:
-  - [ ] Start `opencode serve` on a random free port (or detect an existing server).
-  - [ ] Export `OPENCODE_BASE_URL` for the live test suite.
-  - [ ] Shutdown/cleanup after tests.
-- [ ] Implement OpenCode MCP registration:
-  - [ ] Register the `codesdk` MCP server with OpenCode via `/mcp` (local stdio command or remote URL).
-  - [ ] Verify status via `/mcp` and record chosen transport in support bundles.
-- [ ] Add mocked tests asserting:
-  - [ ] MCP registration requests are well-formed and idempotent.
-  - [ ] Tool call events from OpenCode map to SSOT `tool.call.*` with stable identities.
-- [ ] Add gated live test: `opencode-server tool path` (CodeSDK tool executed via MCP; stream completes).
-- [ ] Document required env vars and defaults:
-  - [ ] `OPENCODE_BASE_URL` / `OPENCODE_URL`
-  - [ ] directory selection (`x-opencode-directory`)
-  - [ ] provider/model selection (provider/model IDs)
+- [x] Add an OpenCode server harness for tests:
+  - [x] Start `opencode serve` on a free port (default is `127.0.0.1:4096`; choose a port and pass `--port`).
+  - [x] Export `OPENCODE_BASE_URL` for the live test suite (preferred; documented by OpenCode).
+  - [x] Isolate OpenCode config/state for tests (temp config dir/file) so we don’t mutate developer state.
+  - [x] Shutdown/cleanup after tests.
+- [x] Implement OpenCode MCP registration:
+  - [x] Register the `codesdk` MCP server with OpenCode via `/mcp` (local stdio command or remote URL).
+  - [x] Verify status via `/mcp` and capture MCP state in implicit sources.
+  - [x] Optional: record chosen MCP transport in support bundles (`mcp-transports.json`).
+- [x] Add mocked tests asserting:
+  - [x] MCP registration requests are well-formed and idempotent.
+  - [x] Tool call events from OpenCode map to SSOT `tool.call.*` with stable identities.
+- [x] Add gated live test: `opencode-server tool path` (CodeSDK tool executed via MCP; stream completes).
+- [x] Document required env vars and defaults:
+  - [x] `OPENCODE_BASE_URL` (preferred); `OPENCODE_URL` (CodeSDK alias; not an official OpenCode knob)
+  - [x] directory selection (`x-opencode-directory` header; verify in live smoke test)
+  - [x] provider/model selection (provider/model IDs)
 
 ### P6.D — Closeout gates (parity)
 
-- [ ] Live suite runs with **no runtime skips** when required env vars are present (Codex + OpenCode included).
-- [ ] Codex + OpenCode both demonstrate “prompt + CodeSDK-owned tool path” end-to-end using OAuth state on this machine.
-- [ ] Support bundles include chosen MCP transport + config snapshots for Codex/OpenCode MCP integrations.
+- [x] Live suite runs with **no runtime skips** when required env vars are present (Codex + OpenCode included).
+- [x] Codex + OpenCode both demonstrate “prompt + CodeSDK-owned tool path” end-to-end using OAuth state on this machine.
+- [x] Support bundles include chosen MCP transport + config snapshots for Codex/OpenCode MCP integrations.
 
 ## Final gates (release readiness)
 

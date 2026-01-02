@@ -3,13 +3,11 @@ import { existsSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { create as createTar } from 'tar';
-import { fileURLToPath } from 'node:url';
 import type { ArtifactRef, McpTransport, NormalizedEvent, RuntimeAdapter, RuntimeEnv } from '../core/types.js';
+import { resolveCodesdkPackageRoot } from '../core/package.js';
 import type { ArtifactStore } from '../executor/artifact-store.js';
 import type { EventStore } from '../executor/event-store.js';
 import { getRuntimeHealth } from '../runtime/index.js';
-
-declare const __filename: string | undefined;
 
 export interface SupportBundleOptions {
   outputPath: string;
@@ -109,7 +107,7 @@ async function collectVersions(runtimeName: string) {
     '@opencode-ai/sdk'
   ];
   const versions: Record<string, string> = {};
-  const root = resolvePackageRoot();
+  const root = resolveCodesdkPackageRoot();
   versions.codesdk = await readPackageVersion(path.join(root, 'package.json'));
 
   for (const pkg of packages) {
@@ -134,20 +132,6 @@ async function readJsonFile(filePath: string): Promise<Record<string, unknown>> 
   return JSON.parse(data) as Record<string, unknown>;
 }
 
-function resolvePackageRoot(): string {
-  const modulePath = resolveModuleFilePath();
-  const start = modulePath ? path.dirname(modulePath) : process.cwd();
-  let dir = start;
-  while (true) {
-    const candidate = path.join(dir, 'package.json');
-    if (existsSync(candidate)) return dir;
-    const parent = path.dirname(dir);
-    if (parent === dir) break;
-    dir = parent;
-  }
-  return process.cwd();
-}
-
 function resolveNodeModulesPackageJson(startDir: string, pkg: string): string | undefined {
   const segments = pkg.split('/').filter(Boolean);
   let dir = startDir;
@@ -157,15 +141,6 @@ function resolveNodeModulesPackageJson(startDir: string, pkg: string): string | 
     const parent = path.dirname(dir);
     if (parent === dir) break;
     dir = parent;
-  }
-  return undefined;
-}
-
-function resolveModuleFilePath(): string | undefined {
-  if (typeof __filename === 'string' && __filename.length > 0) return __filename;
-  const url = (import.meta as unknown as { url?: unknown }).url;
-  if (typeof url === 'string' && url.startsWith('file:')) {
-    return fileURLToPath(url);
   }
   return undefined;
 }

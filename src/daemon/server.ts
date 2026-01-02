@@ -7,6 +7,7 @@ import path from 'node:path';
 import { createReadStream } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import type {
+  McpTransport,
   PermissionMode,
   RuntimeAdapter,
   RuntimeEnv,
@@ -813,6 +814,9 @@ async function handleSupportBundle(
       env: options.env,
       eventStore: options.eventStore,
       artifactStore: options.artifactStore,
+      mcp: {
+        chosen: inferMcpTransport(options.runtime)
+      },
       maxArtifactBytes: 1024 * 1024,
       redactArtifact: redactArtifactBestEffort
     });
@@ -831,6 +835,13 @@ async function handleSupportBundle(
   } finally {
     await rm(tmpDir, { recursive: true, force: true });
   }
+}
+
+function inferMcpTransport(runtime: RuntimeAdapter): McpTransport | undefined {
+  if (runtime.name === 'codex-sdk' || runtime.name === 'opencode-server') {
+    return 'stdio';
+  }
+  return undefined;
 }
 
 function redactArtifactBestEffort(data: Uint8Array, ref: { content_type?: string }): Uint8Array {

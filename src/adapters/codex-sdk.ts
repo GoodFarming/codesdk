@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { readFile, readdir, stat } from 'node:fs/promises';
+import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import {
   Codex,
   type ApprovalMode,
@@ -30,6 +31,7 @@ import type {
 import { compileRuntimeInput } from '../core/context-compiler.js';
 import { hashCanonical } from '../core/hash.js';
 import { buildImplicitSourcesSnapshot } from '../core/implicit-sources.js';
+import { resolveCodesdkBinPath } from '../core/package.js';
 import { InMemoryArtifactStore, type ArtifactStore } from '../executor/artifact-store.js';
 import { storeImplicitSourcesSnapshot } from '../executor/implicit-sources.js';
 import { buildModelInputPayload } from '../executor/model-input.js';
@@ -210,6 +212,14 @@ export class CodexSdkAdapter implements RuntimeAdapter {
     };
 
     const effectiveRuntimeConfig = this.buildRuntimeConfig(env, input.runtimeConfig);
+    if (input.toolManifest?.tools?.length) {
+      await ensureCodexMcpServerConfigured(env, {
+        serverName: 'codesdk',
+        workspaceRoot: typeof effectiveRuntimeConfig.workingDirectory === 'string' ? effectiveRuntimeConfig.workingDirectory : env.cwd,
+        permissionMode: input.permissionMode ?? 'auto',
+        enabledTools: input.toolManifest.tools.map((tool) => tool.name)
+      });
+    }
     const compiledRuntimeConfig = canonicalizeRuntimeConfigForModelInput(effectiveRuntimeConfig, env);
     const compiled = compileRuntimeInput(input.messages as any, {
       toolManifest: input.toolManifest,
@@ -468,6 +478,72 @@ function resolveCodexEnv(env: RuntimeEnv): Record<string, string> {
     next.CODEX_HOME = path.join(home, '.codex');
   }
   return next;
+}
+
+async function ensureCodexMcpServerConfigured(
+  env: RuntimeEnv,
+  options: {
+    serverName: string;
+    workspaceRoot: string;
+    permissionMode: PermissionMode;
+    enabledTools: string[];
+  }
+): Promise<void> {
+  const resolvedEnv = resolveCodexEnv(env);
+  const codexHome = resolvedEnv.CODEX_HOME ?? path.join(env.cwd, '.codex');
+  const configPath = path.join(codexHome, 'config.toml');
+
+  await mkdir(codexHome, { recursive: true });
+
+  const binPath = resolveCodesdkBinPath('codesdk-mcp.js');
+  const args = [
+    binPath,
+    '--workspace-root',
+    options.workspaceRoot,
+    '--permission-mode',
+    options.permissionMode,
+    '--tools',
+    options.enabledTools.join(','),
+    '--tool-name-style',
+    'codex'
+  ];
+
+  const enabledTools =
+    options.enabledTools.length > 0 ? options.enabledTools.map((name) => name.replace(/[^a-zA-Z0-9_-]/g, '_')) : [];
+
+  const header = `[mcp_servers.${options.serverName}]`;
+  const snippet = [
+    '',
+    header,
+    `command = ${JSON.stringify(process.execPath)}`,
+    `args = ${JSON.stringify(args)}`,
+    `enabled_tools = ${JSON.stringify(enabledTools)}`,
+    ''
+  ].join('\n');
+
+  if (!existsSync(configPath)) {
+    await writeFile(configPath, `${snippet.trimStart()}\n`, 'utf8');
+    return;
+  }
+
+  const existing = await readFile(configPath, 'utf8');
+  if (existing.includes(header)) {
+    const lines = existing.split('\n');
+    const headerIndex = lines.findIndex((line) => line.trim() === header);
+    if (headerIndex >= 0) {
+      let endIndex = headerIndex + 1;
+      while (endIndex < lines.length) {
+        const line = lines[endIndex];
+        if (line && line.trim().startsWith('[')) break;
+        endIndex += 1;
+      }
+      const snippetLines = snippet.trim().split('\n');
+      const next = [...lines.slice(0, headerIndex), ...snippetLines, ...lines.slice(endIndex)];
+      await writeFile(configPath, `${next.join('\n').replace(/\s*$/, '')}\n`, 'utf8');
+      return;
+    }
+  }
+  await writeFile(configPath, `${existing.replace(/\s*$/, '')}${snippet}\n`, 'utf8');
 }
 
 function canonicalizeRuntimeConfigForModelInput(

@@ -2,6 +2,25 @@
 
 SDK-first wrapper over agent runtimes. Unifies sessions, streaming, tools, artifacts, and support bundles while keeping runtime-specific adapters and OAuth isolation.
 
+## Highlights
+
+- Unified session/task/event model across runtimes
+- Deterministic event sourcing + replay fixtures
+- MCP tool hosting + sandbox support
+- Daemon-first API (`codesdkd`) for embedding
+
+## Requirements
+
+- Node.js 20+
+- Docker (optional, for sandboxed tool execution)
+
+## Install (from source)
+
+```bash
+npm install
+npm run build
+```
+
 ## Quick start (library)
 
 ```ts
@@ -50,6 +69,24 @@ await handle.completion;
 ```bash
 npx codesdkd --host 127.0.0.1 --port 0 --data-dir /tmp/codesdkd --runtimes claude-agent-sdk,codex-sdk --default-permission-mode auto
 ```
+
+## Testing
+
+```bash
+npm test
+```
+
+Live runtime smoke tests are gated and require OAuth logins for each runtime:
+
+```bash
+RUN_LIVE_TESTS=1 RUN_LIVE_TOOL_TESTS=1 OPENCODE_SPAWN=1 npx vitest run tests/live.test.ts
+```
+
+## Security / Secrets
+
+- Do not commit credentials or local runtime config files.
+- Support bundles redact token fields by design.
+- Use `.env` for local overrides (ignored by git).
 
 ## Docs
 

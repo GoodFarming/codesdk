@@ -1,6 +1,6 @@
 import type { PermissionMode, ToolPolicySnapshot } from '../core/types.js';
 import { PermissionService, SimplePolicyEngine, type PermissionOverrides } from '../executor/policy.js';
-import type { ToolExecutionResult } from '../executor/tool-executor.js';
+import type { ToolExecutionResult, ToolExecutor } from '../executor/tool-executor.js';
 import type { ToolContext } from '../tools/types.js';
 import { ToolRegistry } from '../tools/registry.js';
 
@@ -42,6 +42,7 @@ export interface InProcessMcpServerOptions {
   permissionMode?: PermissionMode;
   permissionOverrides?: PermissionOverrides;
   policyEngine?: PermissionService;
+  toolExecutor?: ToolExecutor;
   onPolicyEvent?: (event: ToolPolicyEvent) => void;
 }
 
@@ -51,6 +52,7 @@ export class InProcessMcpServer {
   private readonly permissionMode: PermissionMode;
   private readonly permissionOverrides?: PermissionOverrides;
   private readonly policyEngine: PermissionService;
+  private readonly toolExecutor?: ToolExecutor;
   private readonly onPolicyEvent?: (event: ToolPolicyEvent) => void;
 
   constructor(options: InProcessMcpServerOptions) {
@@ -59,6 +61,7 @@ export class InProcessMcpServer {
     this.permissionMode = options.permissionMode ?? 'ask';
     this.permissionOverrides = options.permissionOverrides;
     this.policyEngine = options.policyEngine ?? new SimplePolicyEngine();
+    this.toolExecutor = options.toolExecutor;
     this.onPolicyEvent = options.onPolicyEvent;
   }
 
@@ -113,15 +116,28 @@ export class InProcessMcpServer {
     }
 
     let execution: ToolExecutionResult;
-    try {
-      execution = await tool.handler(input, this.context);
-    } catch (error) {
-      return {
-        ok: false,
-        is_error: true,
-        error: error instanceof Error ? error.message : String(error),
-        policy_snapshot: decision.snapshot
-      };
+    if (this.toolExecutor) {
+      try {
+        execution = await this.toolExecutor.execute(name, input);
+      } catch (error) {
+        return {
+          ok: false,
+          is_error: true,
+          error: error instanceof Error ? error.message : String(error),
+          policy_snapshot: decision.snapshot
+        };
+      }
+    } else {
+      try {
+        execution = await tool.handler(input, this.context);
+      } catch (error) {
+        return {
+          ok: false,
+          is_error: true,
+          error: error instanceof Error ? error.message : String(error),
+          policy_snapshot: decision.snapshot
+        };
+      }
     }
 
     if (!execution.is_error) {
@@ -137,11 +153,24 @@ export class InProcessMcpServer {
       }
     }
 
+    if (execution.is_error) {
+      const errorMessage =
+        typeof (execution.result as { error?: unknown } | undefined)?.error === 'string'
+          ? String((execution.result as { error?: unknown }).error)
+          : 'tool execution failed';
+      return {
+        ok: false,
+        result: execution.result,
+        is_error: true,
+        error: errorMessage,
+        policy_snapshot: decision.snapshot
+      };
+    }
+
     return {
-      ok: !execution.is_error,
+      ok: true,
       result: execution.result,
-      is_error: execution.is_error,
-      error: execution.is_error ? 'tool execution failed' : undefined,
+      is_error: false,
       policy_snapshot: decision.snapshot
     };
   }

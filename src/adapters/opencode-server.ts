@@ -26,6 +26,7 @@ import type {
 import { compileRuntimeInput } from '../core/context-compiler.js';
 import { hashCanonical } from '../core/hash.js';
 import { buildImplicitSourcesSnapshot } from '../core/implicit-sources.js';
+import { resolveCodesdkBinPath } from '../core/package.js';
 import { InMemoryArtifactStore, type ArtifactStore } from '../executor/artifact-store.js';
 import { storeImplicitSourcesSnapshot } from '../executor/implicit-sources.js';
 import { buildModelInputPayload } from '../executor/model-input.js';
@@ -244,6 +245,15 @@ export class OpencodeServerAdapter implements RuntimeAdapter {
       maxChars: this.options.maxChars
     });
 
+    if (input.toolManifest?.tools?.length) {
+      await ensureOpencodeMcpServerConfigured(client, directory, {
+        serverName: 'codesdk',
+        workspaceRoot: directory,
+        permissionMode: input.permissionMode ?? 'auto',
+        enabledTools: input.toolManifest.tools.map((tool) => tool.name)
+      });
+    }
+
     const implicitSnapshot = await collectOpencodeImplicitSources(
       client,
       directory,
@@ -272,6 +282,8 @@ export class OpencodeServerAdapter implements RuntimeAdapter {
     const messagePartOrder = new Map<string, string[]>();
     const toolCalls = new Map<string, ToolIdentity>();
     const toolStatuses = new Map<string, 'requested' | 'running' | 'completed'>();
+    const completedMessages = new Set<string>();
+    const usageTotals = { input_tokens: 0, output_tokens: 0, cached_input_tokens: 0 };
 
     const handleTextPart = (part: { id: string; messageID: string; text: string }, delta?: string) => {
       const previous = textParts.get(part.id) ?? '';
@@ -435,28 +447,42 @@ export class OpencodeServerAdapter implements RuntimeAdapter {
           } else if (payload.type === 'message.updated') {
             const info = payload.properties.info as Message;
             if (info.sessionID !== sessionId) continue;
-            if (info.role === 'assistant' && info.time.completed && !completed) {
+            if (info.role === 'assistant' && info.time.completed) {
+              if (completedMessages.has(info.id)) continue;
+              completedMessages.add(info.id);
+
+              usageTotals.input_tokens += info.tokens?.input ?? 0;
+              usageTotals.output_tokens += info.tokens?.output ?? 0;
+              usageTotals.cached_input_tokens += info.tokens?.cache?.read ?? 0;
+
+              const isToolCallFinish = info.finish === 'tool-calls';
               const content = buildMessageText(info.id);
-              if (content) {
+              if (content && !isToolCallFinish) {
                 const payloadOut: ModelOutputCompletedPayload = {
                   content: [{ type: 'text', text: content }]
                 };
                 emit('model.output.completed', payloadOut as unknown as Record<string, unknown>);
               }
-              emit('usage.reported', {
-                input_tokens: info.tokens.input,
-                output_tokens: info.tokens.output,
-                cached_input_tokens: info.tokens.cache.read
-              });
+
               if (info.error) {
                 emit('task.failed', {
                   error: info.error.name ?? 'runtime_error',
                   retryable: false,
                   raw: info.error
                 });
+                completed = true;
+                break;
               }
-              completed = true;
-              break;
+
+              if (!isToolCallFinish) {
+                emit('usage.reported', {
+                  input_tokens: usageTotals.input_tokens,
+                  output_tokens: usageTotals.output_tokens,
+                  cached_input_tokens: usageTotals.cached_input_tokens
+                });
+                completed = true;
+                break;
+              }
             }
           } else if (payload.type === 'session.error') {
             if (payload.properties.sessionID && payload.properties.sessionID !== sessionId) continue;
@@ -577,6 +603,86 @@ async function collectOpencodeImplicitSources(
     sources,
     precedence: ['server']
   });
+}
+
+async function ensureOpencodeMcpServerConfigured(
+  client: OpencodeClient,
+  directory: string,
+  options: {
+    serverName: string;
+    workspaceRoot: string;
+    permissionMode: PermissionMode;
+    enabledTools: string[];
+  }
+): Promise<void> {
+  const binPath = resolveCodesdkBinPath('codesdk-mcp.js');
+  const command = [
+    process.execPath,
+    binPath,
+    '--workspace-root',
+    options.workspaceRoot,
+    '--permission-mode',
+    options.permissionMode,
+    '--tools',
+    options.enabledTools.join(',')
+  ];
+
+  const query = { directory };
+  let status: Record<string, { status: string } | undefined> | undefined;
+  try {
+    const response = await client.mcp.status({
+      responseStyle: 'data',
+      throwOnError: true,
+      query
+    });
+    status = unwrapData(response) as typeof status;
+  } catch {
+    status = undefined;
+  }
+
+  if (!status?.[options.serverName]) {
+    try {
+      await client.mcp.add({
+        responseStyle: 'data',
+        throwOnError: true,
+        query,
+        body: {
+          name: options.serverName,
+          config: {
+            type: 'local',
+            command,
+            enabled: true
+          }
+        }
+      });
+    } catch {
+      // best-effort; another concurrent task may have already added the server.
+    }
+  }
+
+  try {
+    const response = await client.mcp.status({
+      responseStyle: 'data',
+      throwOnError: true,
+      query
+    });
+    status = unwrapData(response) as typeof status;
+  } catch {
+    status = undefined;
+  }
+
+  if (status?.[options.serverName]?.status !== 'connected') {
+    try {
+      await client.mcp.connect({
+        responseStyle: 'data',
+        throwOnError: true,
+        query,
+        path: { name: options.serverName }
+      });
+    } catch {
+      // ignore - the runtime may still execute internal tools.
+    }
+  }
 }
 
 function formatMessagesAsPrompt(
